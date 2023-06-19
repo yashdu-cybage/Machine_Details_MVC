@@ -5,16 +5,21 @@ namespace MVC_Project.Controllers
 {
     public class MVCProjectController : Controller
     {
-        private readonly HttpClient _httpClient;
 
-        public MVCProjectController(HttpClient httpClient)
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _config;
+
+        public MVCProjectController(HttpClient httpClient, IConfiguration config)
         {
             _httpClient = httpClient;
+            _config = config;
         }
+
         public async Task<IActionResult> Index()
         {
 
-            var response = await _httpClient.GetAsync("https://localhost:7197/api/Machine");
+            var URL = _config.GetValue<string>("API_URL");
+            var response = await _httpClient.GetAsync(URL);
             var resultString = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject(resultString);
             return View(result);
